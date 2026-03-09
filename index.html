@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OBJECTION! — Sales Flash Card Trainer</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0c10;
+  --surface: #12151c;
+  --surface2: #1a1e28;
+  --border: #252a38;
+  --border2: #2e3448;
+  --green: #00e87a;
+  --green-dim: #003d20;
+  --green-glow: rgba(0,232,122,0.15);
+  --red: #ff3d5a;
+  --red-dim: #3d0010;
+  --red-glow: rgba(255,61,90,0.15);
+  --amber: #ffb830;
+  --amber-dim: #3d2800;
+  --blue: #3d9fff;
+  --blue-dim: #001a3d;
+  --text: #e8eaf0;
+  --text-mid: #8a90a8;
+  --text-dim: #4a5068;
+  --pricing: #ff6b35;
+  --timing: #a855f7;
+  --competitor: #3d9fff;
+  --need: #00e87a;
+  --authority: #ffb830;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'IBM Plex Sans', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Grid background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.screen {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+}
+
+/* ── INTRO SCREEN ── */
+#introScreen {}
+
+.intro-eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.intro-title {
+  font-family: 'Bebas Neue', cursive;
+  font-size: clamp(72px, 12vw, 120px);
+  color: var(--text);
+  text-align: center;
+  line-height: 0.9;
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+
+.intro-title span {
+  color: var(--green);
+  text-shadow: 0 0 40px var(--green-glow), 0 0 80px rgba(0,232,122,0.1);
+}
+
+.intro-subtitle {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  color: var(--text-mid);
+  text-align: center;
+  letter-spacing: 2px;
+  margin-bottom: 48px;
+}
+
+.category-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 48px;
+  max-width: 600px;
+}
+
+.cat-pill {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid;
+}
+.cat-pill.pricing  { color: var(--pricing);    border-color: var(--pricing);    background: rgba(255,107,53,0.08); }
+.cat-pill.timing   { color: var(--timing);     border-color: var(--timing);     background: rgba(168,85,247,0.08); }
+.cat-pill.comp     { color: var(--blue);       border-color: var(--blue);       background: rgba(61,159,255,0.08); }
+.cat-pill.need     { color: var(--need);       border-color: var(--need);       background: rgba(0,232,122,0.08); }
+.cat-pill.authority{ color: var(--amber);      border-color: var(--amber);      background: rgba(255,184,48,0.08); }
+
+.stats-row {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 48px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.stat-item {
+  text-align: center;
+}
+.stat-num {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 36px;
+  color: var(--green);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.start-btn {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 22px;
+  letter-spacing: 3px;
+  padding: 18px 64px;
+  background: var(--green);
+  color: var(--bg);
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.15s;
+  box-shadow: 0 0 30px rgba(0,232,122,0.3);
+}
+.start-btn:hover {
+  background: #00ff88;
+  box-shadow: 0 0 50px rgba(0,232,122,0.5);
+  transform: translateY(-2px);
+}
+
+/* ── GAME SCREEN ── */
+#gameScreen { display: none; justify-content: flex-start; padding-top: 0; }
+
+.game-header {
+  width: 100%;
+  max-width: 780px;
+  padding: 20px 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.game-logo {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 24px;
+  color: var(--green);
+  letter-spacing: 2px;
+}
+
+.progress-track {
+  display: flex;
+  gap: 4px;
+}
+.progress-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border2);
+  transition: background 0.2s;
+}
+.progress-dot.done { background: var(--green); }
+.progress-dot.current { background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulse 1s ease infinite; }
+.progress-dot.wrong { background: var(--red); }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.score-display {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  color: var(--text-mid);
+}
+.score-display span {
+  color: var(--green);
+  font-weight: 700;
+  font-size: 18px;
+}
+
+/* Timer */
+.timer-ring {
+  position: relative;
+  width: 52px;
+  height: 52px;
+}
+.timer-ring svg {
+  transform: rotate(-90deg);
+  width: 52px;
+  height: 52px;
+}
+.timer-bg { fill: none; stroke: var(--border2); stroke-width: 3; }
+.timer-arc {
+  fill: none;
+  stroke: var(--green);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 138.2;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1s linear, stroke 0.3s;
+}
+.timer-arc.warning { stroke: var(--amber); }
+.timer-arc.danger  { stroke: var(--red); }
+.timer-num {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* Difficulty badge */
+.difficulty-badge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid;
+}
+.difficulty-badge.easy   { color: var(--green); border-color: var(--green); background: var(--green-dim); }
+.difficulty-badge.medium { color: var(--amber); border-color: var(--amber); background: var(--amber-dim); }
+.difficulty-badge.hard   { color: var(--red);   border-color: var(--red);   background: var(--red-dim); }
+
+/* Card */
+.card-area {
+  width: 100%;
+  max-width: 780px;
+}
+
+.objection-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 32px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+  animation: cardIn 0.3s ease;
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.objection-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.objection-card.pricing::before    { background: var(--pricing); }
+.objection-card.timing::before     { background: var(--timing); }
+.objection-card.competitor::before { background: var(--blue); }
+.objection-card.need::before       { background: var(--need); }
+.objection-card.authority::before  { background: var(--amber); }
+
+.card-category {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.card-category.pricing    { color: var(--pricing); }
+.card-category.timing     { color: var(--timing); }
+.card-category.competitor { color: var(--blue); }
+.card-category.need       { color: var(--need); }
+.card-category.authority  { color: var(--amber); }
+
+.card-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.card-objection {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: clamp(18px, 3vw, 24px);
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.card-persona {
+  margin-top: 14px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 0.5px;
+}
+
+/* Options */
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.option-btn {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 18px 20px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  font-family: 'IBM Plex Sans', sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+.option-btn:hover:not(:disabled) {
+  border-color: var(--text-dim);
+  background: var(--surface2);
+  transform: translateY(-1px);
+}
+.option-btn:disabled { cursor: default; }
+
+.option-letter {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-dim);
+  flex-shrink: 0;
+  margin-top: 1px;
+  transition: color 0.15s;
+}
+.option-text {
+  font-size: 14px;
+  color: var(--text-mid);
+  line-height: 1.55;
+  transition: color 0.15s;
+}
+
+.option-btn.correct {
+  border-color: var(--green);
+  background: var(--green-dim);
+  box-shadow: 0 0 20px var(--green-glow);
+}
+.option-btn.correct .option-letter { color: var(--green); }
+.option-btn.correct .option-text   { color: var(--text); }
+
+.option-btn.wrong {
+  border-color: var(--red);
+  background: var(--red-dim);
+}
+.option-btn.wrong .option-letter { color: var(--red); }
+.option-btn.wrong .option-text   { color: var(--text-mid); opacity: 0.6; }
+
+.option-btn.reveal {
+  border-color: var(--green);
+  background: var(--green-dim);
+  opacity: 0.5;
+}
+
+/* Feedback */
+.feedback-panel {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 20px 22px;
+  display: none;
+  animation: feedbackIn 0.25s ease;
+  margin-bottom: 16px;
+}
+.feedback-panel.visible { display: block; }
+
+@keyframes feedbackIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.feedback-result {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.feedback-result.correct { color: var(--green); }
+.feedback-result.wrong   { color: var(--red); }
+
+.feedback-text {
+  font-size: 14px;
+  color: var(--text-mid);
+  line-height: 1.65;
+}
+.feedback-text strong { color: var(--text); font-weight: 600; }
+
+.next-btn {
+  width: 100%;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 14px;
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--text-mid);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: none;
+}
+.next-btn.visible { display: block; }
+.next-btn:hover { border-color: var(--text-mid); color: var(--text); background: var(--surface2); }
+
+/* Difficulty transition */
+.level-up-banner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 32px 48px;
+  text-align: center;
+  z-index: 100;
+  display: none;
+  box-shadow: 0 0 80px rgba(0,0,0,0.8);
+}
+.level-up-banner.visible { display: block; animation: popIn 0.3s ease; }
+@keyframes popIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+.level-up-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.level-up-title {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 48px;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.level-up-title.medium { color: var(--amber); text-shadow: 0 0 30px rgba(255,184,48,0.4); }
+.level-up-title.hard   { color: var(--red);   text-shadow: 0 0 30px rgba(255,61,90,0.4); }
+.level-up-desc {
+  font-size: 14px;
+  color: var(--text-mid);
+}
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 99;
+  display: none;
+}
+.overlay.visible { display: block; }
+
+/* ── RESULTS SCREEN ── */
+#resultsScreen { display: none; }
+
+.results-title {
+  font-family: 'Bebas Neue', cursive;
+  font-size: clamp(48px, 8vw, 80px);
+  text-align: center;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
+.results-score-wrap {
+  text-align: center;
+  margin-bottom: 48px;
+}
+.results-score {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 96px;
+  line-height: 1;
+  color: var(--green);
+  text-shadow: 0 0 60px rgba(0,232,122,0.3);
+}
+.results-score-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.results-tier {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-align: center;
+  margin-bottom: 32px;
+  padding: 12px 24px;
+  border-radius: 999px;
+  border: 1px solid;
+  display: inline-block;
+}
+.results-tier.elite   { color: var(--green); border-color: var(--green); background: var(--green-dim); }
+.results-tier.strong  { color: var(--blue);  border-color: var(--blue);  background: var(--blue-dim); }
+.results-tier.developing { color: var(--amber); border-color: var(--amber); background: var(--amber-dim); }
+.results-tier.needs-work { color: var(--red); border-color: var(--red); background: var(--red-dim); }
+
+.results-breakdown {
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 40px;
+}
+.breakdown-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.breakdown-cat {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  width: 180px;
+  flex-shrink: 0;
+}
+.breakdown-bar-track {
+  flex: 1;
+  height: 4px;
+  background: var(--border2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.breakdown-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.6s ease;
+}
+.breakdown-score {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--text-mid);
+  width: 40px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.results-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.btn-primary {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 20px;
+  letter-spacing: 2px;
+  padding: 14px 48px;
+  background: var(--green);
+  color: var(--bg);
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.15s;
+  box-shadow: 0 0 20px rgba(0,232,122,0.3);
+}
+.btn-primary:hover { background: #00ff88; transform: translateY(-1px); }
+
+.btn-secondary {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 1px;
+  padding: 14px 32px;
+  background: transparent;
+  color: var(--text-mid);
+  border: 1px solid var(--border2);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+.btn-secondary:hover { border-color: var(--text-mid); color: var(--text); }
+
+/* Credit */
+.credit {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 1.5px;
+  text-align: center;
+  margin-top: 40px;
+}
+
+@media (max-width: 600px) {
+  .options-grid { grid-template-columns: 1fr; }
+  .game-header { padding: 16px 0; }
+  .breakdown-cat { width: 120px; font-size: 10px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── INTRO ── -->
+<div class="screen" id="introScreen">
+  <div class="intro-eyebrow">Sales Training · Flash Card Drill</div>
+  <div class="intro-title">OBJECT<span>!</span>ON</div>
+  <div class="intro-subtitle">Handle it or lose the deal</div>
+
+  <div class="category-pills">
+    <span class="cat-pill pricing">Pricing / Budget</span>
+    <span class="cat-pill timing">Timing / Not Now</span>
+    <span class="cat-pill comp">Competitor</span>
+    <span class="cat-pill need">Need / Value</span>
+    <span class="cat-pill authority">Authority</span>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-item">
+      <div class="stat-num">15</div>
+      <div class="stat-label">Objections</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Difficulty Levels</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">30s</div>
+      <div class="stat-label">Per Card</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">5</div>
+      <div class="stat-label">Categories</div>
+    </div>
+  </div>
+
+  <button class="start-btn" onclick="startGame()">START DRILL</button>
+  <div class="credit" style="margin-top:32px">Designed by Chris Oliver</div>
+</div>
+
+<!-- ── GAME ── -->
+<div class="screen" id="gameScreen">
+  <div class="game-header">
+    <div class="header-left">
+      <div class="game-logo">OBJ!</div>
+      <div class="progress-track" id="progressTrack"></div>
+    </div>
+    <div class="header-right">
+      <div class="difficulty-badge easy" id="diffBadge">Easy</div>
+      <div class="score-display">Score <span id="scoreDisplay">0</span></div>
+      <div class="timer-ring">
+        <svg viewBox="0 0 52 52">
+          <circle class="timer-bg" cx="26" cy="26" r="22"/>
+          <circle class="timer-arc" id="timerArc" cx="26" cy="26" r="22"/>
+        </svg>
+        <div class="timer-num" id="timerNum">30</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-area">
+    <div class="objection-card" id="objCard">
+      <div class="card-category" id="cardCategory"></div>
+      <div class="card-label">THE OBJECTION</div>
+      <div class="card-objection" id="cardObjection"></div>
+      <div class="card-persona" id="cardPersona"></div>
+    </div>
+
+    <div class="options-grid" id="optionsGrid"></div>
+
+    <div class="feedback-panel" id="feedbackPanel">
+      <div class="feedback-result" id="feedbackResult"></div>
+      <div class="feedback-text" id="feedbackText"></div>
+    </div>
+
+    <button class="next-btn" id="nextBtn" onclick="nextCard()">Next Objection →</button>
+  </div>
+</div>
+
+<!-- ── RESULTS ── -->
+<div class="screen" id="resultsScreen">
+  <div class="results-title" id="resultsTitle">DRILL COMPLETE</div>
+  <div class="results-score-wrap">
+    <div class="results-score" id="finalScore">0</div>
+    <div class="results-score-label">points earned</div>
+  </div>
+  <div class="results-tier" id="resultsTier"></div>
+
+  <div class="results-breakdown" id="resultsBreakdown"></div>
+
+  <div class="results-actions">
+    <button class="btn-primary" onclick="restartGame()">RUN IT AGAIN</button>
+    <button class="btn-secondary" onclick="showIntro()">← Back to Start</button>
+  </div>
+  <div class="credit">Designed by Chris Oliver</div>
+</div>
+
+<!-- Level up overlay -->
+<div class="overlay" id="overlay"></div>
+<div class="level-up-banner" id="levelUpBanner">
+  <div class="level-up-label">Difficulty Increasing</div>
+  <div class="level-up-title" id="levelUpTitle"></div>
+  <div class="level-up-desc" id="levelUpDesc"></div>
+</div>
+
+<script>
+const CARDS = [
+  // ── EASY ──
+  {
+    category: 'pricing', categoryLabel: 'Pricing / Budget', difficulty: 'easy',
+    objection: '"This is more than we budgeted for."',
+    persona: '— VP of Operations, mid-size company',
+    options: [
+      { letter: 'A', text: 'I understand. Let me see what I can do on price to make this work for you.', correct: false },
+      { letter: 'B', text: 'I hear that. Can I ask — what does this problem cost you if it stays unsolved for another year?', correct: true },
+      { letter: 'C', text: 'Our price actually reflects the quality and support you\'re getting, which competitors don\'t offer.', correct: false },
+      { letter: 'D', text: 'What is your budget? I can see if we have a package that fits.', correct: false }
+    ],
+    feedback: {
+      correct: '<strong>Right call.</strong> Before you negotiate, establish the cost of inaction. If the problem costs them $500K a year, a $50K solution is cheap — but they\'ll never see that unless you ask. Price objections are almost always value objections in disguise.',
+      wrong: 'This objection is almost never about price — it\'s about perceived value. Jumping to discounts or asking for their budget before establishing impact trains prospects to open every conversation with a price objection. Surface the cost of inaction first.'
+    }
+  },
+  {
+    category: 'timing', categoryLabel: 'Timing / Not Now', difficulty: 'easy',
+    objection: '"Can we revisit this next quarter?"',
+    persona: '— Director of Sales, SaaS company',
+    options: [
+      { letter: 'A', text: 'Absolutely, I\'ll put a reminder in and reach out in 90 days.', correct: false },
+      { letter: 'B', text: 'Of course. Is there something specific happening next quarter that makes it a better time, or is it more about bandwidth right now?', correct: true },
+      { letter: 'C', text: 'I understand, but I want to let you know this pricing won\'t be available next quarter.', correct: false },
+      { letter: 'D', text: 'No problem at all — whatever works best for you.', correct: false }
+    ],
+    feedback: {
+      correct: '<strong>Exactly right.</strong> "Next quarter" is almost never a real date — it\'s a deflection. Your question separates a genuine timing constraint from a soft no, without being pushy. If they have a real reason, you\'ll hear it. If they don\'t, they\'ll struggle to answer.',
+      wrong: '"Next quarter" is usually a soft no, not a real date. Accepting it without a question means you\'ve agreed to restart the conversation from zero in 90 days. Probe it — respectfully but directly — to understand if there\'s a real constraint or just inertia.'
+    }
+  },
+  {
+    category: 'competitor', categoryLabel: 'Competitor', difficulty: 'easy',
+    objection: '"We already have something that does this."',
+    persona: '— IT Manager, enterprise company',
+    options: [
+      { letter: 'A', text: 'What solution are you currently using? I can show you how we compare.', correct: false },
+      { letter: 'B', text: 'A lot of our customers came from that same situation. Can I ask — what prompted you to take this meeting if you\'re already covered?', correct: true },
+      { letter: 'C', text: 'Our platform is actually quite different from what most companies use.', correct: false },
+      { letter: 'D', text: 'I understand. Well if you ever feel like your current solution isn\'t meeting your needs, feel free to reach out.', correct: false }
+    ],
+    feedback: {
+      correct: '<strong>Smart move.</strong> They took the meeting. That means something wasn\'t fully satisfied. Your question surfaces what it is without attacking their current vendor — which would put them on the defensive. Let them tell you what the gap is.',
+      wrong: 'If they already have a solution and they\'re talking to you, something is missing. The answer is to figure out what that is — not to immediately jump into a feature comparison, which puts them on the defensive and you in commodity territory.'
+    }
+  },
+  {
+    category: 'need', categoryLabel: 'Need / Value', difficulty: 'easy',
+    objection: '"I\'m not sure we really need this right now."',
+    persona: '— Head of RevOps, growth-stage startup',
+    options: [
+      { letter: 'A', text: 'That\'s completely fair. Let me send you some case studies that might be helpful.', correct: false },
+      { letter: 'B', text: 'Tell me more — when you say you don\'t need it right now, what does that mean for you in six months?', correct: true },
+      { letter: 'C', text: 'Most companies feel that way until they see what they\'re missing.', correct: false },
+      { letter: 'D', text: 'I think if you saw a demo you\'d feel differently. Can we set that up?', correct: false }
+    ],
+    feedback: {
+      correct: '<strong>Good instinct.</strong> "Don\'t need it" often means "I don\'t see the pain clearly yet." Your question moves the timeframe forward without being aggressive — it invites them to think about what changes if the problem doesn\'t get solved.',
+      wrong: 'This objection usually means the pain hasn\'t been made concrete yet. Case studies, demos, and condescension all skip past the real issue. Ask a question that makes the future cost of inaction visible instead.'
+    }
+  },
+  {
+    category: 'authority', categoryLabel: 'Authority', difficulty: 'easy',
+    objection: '"I\'d need to run this by my manager."',
+    persona: '— Sales Operations Manager',
+    options: [
+      { letter: 'A', text: 'No problem! I can send you a summary email you can forward along.', correct: false },
+      { letter: 'B', text: 'That makes sense. If your manager were on this call right now, what do you think their biggest question would be?', correct: true },
+      { letter: 'C', text: 'Would it make sense to get your manager on our next call so we can answer their questions directly?', correct: false },
+      { letter: 'D', text: 'Absolutely — just let me know when they\'re available and we can loop them in.', correct: false }
+    ],
+    feedback: {
+      correct: '<strong>Excellent.</strong> This question does two things simultaneously: it reveals the real objection hiding behind the manager shield, and it turns your champion into a deal-analyzer who now has to think through the pitch from the decision-maker\'s perspective. That\'s preparation and qualification in one question.',
+      wrong: 'Option C is actually decent but not as powerful as B. A summary email disappears. Asking what the manager\'s question would be reveals the real objection and preps your champion in one move. You\'re not just scheduling — you\'re qualifying.'
+    }
+  },
+
+  // ── MEDIUM ──
+  {
+    category: 'pricing', categoryLabel: 'Pricing / Budget', difficulty: 'medium',
+    objection: '"We can get a cheaper solution from your competitor."',
+    persona: '— CFO, 200-person company',
+    options: [
+      { letter: 'A', text: 'I\'d love to understand what they\'re offering. Can you share the proposal so I can do a direct comparison?', correct: false },
+      { letter: 'B', text: 'That\'s worth exploring. Can I ask what\'s driving the decision — is it purely cost, or is there something specific their solution does that you need?', correct: true },
+      { letter: 'C', text: 'You\'ll find that when you add up implementation, training and support costs, we\'re actually very competitive.', correct: false },
+      { letter: 'D', text: 'I understand. We can look at a smaller package to get you closer to that price point.', correct: false }
+    ],
+    feedback: {
+      correct: '<strong>Right approach.</strong> You didn\'t panic and you didn\'t immediately go to price. The CFO\'s answer will tell you whether this is a pure price play or a capability question — two very different conversations with very different responses. Never fight a price battle before you know what you\'re actually competing on.',
+      wrong: 'Asking for the competitor\'s proposal hands them leverage. Comparing implementation costs sounds defensive. Offering a smaller package concedes before you\'ve even understood the situation. Find out what\'s actually driving the comparison first.'
+    }
+  },
+  {
+    category: 'timing', categoryLabel: 'Timing / Not Now', difficulty: 'medium',
+    objection: '"We just went through a major initiative. The team needs a break from change."',
+    persona: '— VP of Sales, enterprise company',
+    options: [
+      { letter: 'A', text: 'I completely understand — change fatigue is real. What would the right window look like for you?', correct: false },
+      { letter: 'B', text: 'That makes sense. What was the initiative? I\'m wondering if what we\'re solving actually makes that transition harder or easier.', correct: true },
+      { letter: 'C', text: 'Our implementation is designed to be low-disruption — most teams are up in two weeks.', correct: false },
+      { letter: 'D', text: 'I hear you. We\'ll circle back when things settle down.', correct: false }
+    ],
+    feedback: {
+      correct: '<strong>Shrewd question.</strong> You didn\'t accept the objection at face value. If their recent initiative created the exact problem you solve, you\'ve just reframed the timing. Change fatigue is real — but sometimes the solution to a painful change is another change that makes the pain stop. You can only know that if you ask.',
+      wrong: 'Accepting change fatigue without exploring it leaves money on the table. Their recent initiative might have created the exact gap you fill. Low-disruption claims sound like deflection. "Circle back" is deal death. Find out what the initiative was.'
+    }
+  },
+  {
+    category: 'competitor', categoryLabel: 'Competitor', difficulty: 'medium',
+    objection: '"We\'ve been with our current vendor for five years. It would take a lot to make us switch."',
+    persona: '— Director of Customer Success, SaaS',
+    options: [
+      { letter: 'A', text: 'That loyalty is admirable — they\'re lucky to have you as a customer.', correct: false },
+      { letter: 'B', text: 'Five years is a long relationship. What would \'a lot\' look like? What would need to be true for you to consider it worthwhile?', correct: true },
+      { letter: 'C', text: 'I\'d love to show you what you might be missing — a lot changes in five years.', correct: false },
+      { letter: 'D', text: 'What\'s your renewal date? We could time a pilot to line up with that.', correct: false }
+    ],
+    feedback: {
+      correct: '<strong>Correct.</strong> You named what they said, then asked them to define their own bar. Now they have to articulate what a winning case looks like — which is information you couldn\'t have gotten any other way. If they give you a real answer, you have a roadmap. If they can\'t answer, the objection was softer than it sounded.',
+      wrong: 'Complimenting their loyalty is sycophantic. "What you might be missing" is arrogant. Jumping to renewal dates skips the actual question. The most useful thing you can do is ask them to define what it would take — and then listen.'
+    }
+  },
+  {
+    category: 'need', categoryLabel: 'Need / Value', difficulty: 'medium',
+    objection: '"Our team is doing fine without it, honestly."',
+    persona: '— VP of Revenue, mid-market company',
+    options: [
+      { letter: 'A', text: 'Fine is a good baseline — but I\'m curious, how would you know if there was a gap you weren\'t seeing?', correct: true },
+      { letter: 'B', text: 'I\'m glad to hear that. If things change we\'re here.', correct: false },
+      { letter: 'C', text: 'Our customers said the same thing before they saw our platform. It usually changes pretty quickly.', correct: false },
+      { letter: 'D', text: 'Can I show you a quick demo? I think you\'d see some gaps pretty clearly.', correct: false }
+    ],
+    feedback: {
+      correct: '<strong>Sharp question.</strong> "Fine" is a self-assessment based on available information. Your question doesn\'t challenge them — it asks a genuine epistemological question: how would they know? This creates genuine curiosity rather than defensiveness. It\'s the most respectful way to challenge a complacency objection.',
+      wrong: '"Fine" often means "we\'ve normalized the problem." Giving up, citing other customers, or jumping to a demo all fail to address the fundamental issue: they may not know what they don\'t know. The question about how they\'d see a gap is the key move here.'
+    }
+  },
+  {
+    category: 'authority', categoryLabel: 'Authority', difficulty: 'medium',
+    objection: '"This decision involves three other departments. I can\'t commit without them."',
+    persona: '— Head of Enablement, enterprise company',
+    options: [
+      { letter: 'A', text: 'That\'s common in organizations like yours. Can you help me understand who the other stakeholders are and what each of them cares most about?', correct: true },
+      { letter: 'B', text: 'I understand. Can you let me know when you\'ve had a chance to loop them in?', correct: false },
+      { letter: 'C', text: 'We work with a lot of cross-functional teams. I can put together a one-pager for each department.', correct: false },
+      { letter: 'D', text: 'What if we started with a small pilot in your team and expanded from there?', correct: false }
+    ],
+    feedback: {
+      correct: '<strong>Right move.</strong> Multi-stakeholder deals die when sellers work through one person who can\'t close. Your question maps the buying committee and starts to surface what each stakeholder actually cares about — which is the only information that lets you build a multi-threaded strategy instead of hoping your champion can sell it internally.',
+      wrong: 'Waiting to hear back is passive deal management. One-pagers for departments you haven\'t talked to will miss the mark. A pilot sidesteps the real issue. You need to understand who the stakeholders are and what they care about before anything else.'
+    }
+  },
+
+  // ── HARD ──
+  {
+    category: 'pricing', categoryLabel: 'Pricing / Budget', difficulty: 'hard',
+    objection: '"The board just froze all discretionary spending. There\'s nothing I can do."',
+    persona: '— CRO, Series B startup',
+    options: [
+      { letter: 'A', text: 'I\'m sorry to hear that. Let\'s stay in touch and reconnect when things open up.', correct: false },
+      { letter: 'B', text: 'I appreciate you telling me. Is the freeze across all spend, or are there categories considered essential that are still moving?', correct: true },
+      { letter: 'C', text: 'What if we structured this as a services agreement instead of software to work around the freeze?', correct: false },
+      { letter: 'D', text: 'Would it help if I spoke directly to your board about the ROI?', correct: false }
+    ],
+    feedback: {
+      correct: '<strong>Right instinct.</strong> A blanket freeze rarely covers everything. Essential spend, revenue-generating investments, and pre-committed budgets often still move. Your question doesn\'t challenge the freeze — it maps the landscape. Offering a workaround too fast looks opportunistic. Asking to call the board is a career-limiting move for your champion.',
+      wrong: 'Freezes are rarely absolute. "Stay in touch" is deal death. Suggesting workarounds before you understand the situation looks like you\'re trying to help them cheat their own board. Asking to speak to the board is likely to damage your champion\'s trust. Probe the scope of the freeze first.'
+    }
+  },
+  {
+    category: 'timing', categoryLabel: 'Timing / Not Now', difficulty: 'hard',
+    objection: '"We\'re in a quiet period before a merger. Nothing can move forward right now."',
+    persona: '— VP of Finance, enterprise company',
+    options: [
+      { letter: 'A', text: 'Understood. When does the quiet period end, and who\'s the right person to talk to post-merger?', correct: true },
+      { letter: 'B', text: 'I understand completely. We\'ll wait to hear from you.', correct: false },
+      { letter: 'C', text: 'A merger is actually a great time to establish new vendors before the new structure locks in.', correct: false },
+      { letter: 'D', text: 'Is there anyone on the other side of the merger I should be talking to?', correct: false }
+    ],
+    feedback: {
+      correct: '<strong>Disciplined and smart.</strong> You respected the constraint — which is real and legal — while keeping the deal alive by nailing down two things: the timeline and the decision-maker on the other side. Option C is tone-deaf (sounds like you\'re trying to sneak through before legal scrutiny). Option D is too aggressive with someone in a quiet period.',
+      wrong: 'A pre-merger quiet period is a real constraint — you cannot push through it. The question is what you do with the time. Getting a timeline and identifying the right post-merger contact keeps the deal alive without disrespecting the situation. Suggesting it\'s a good time to sneak in a vendor decision will end the relationship.'
+    }
+  },
+  {
+    category: 'competitor', categoryLabel: 'Competitor', difficulty: 'hard',
+    objection: '"Your competitor just offered us everything you do at 30% less. Why should we choose you?"',
+    persona: '— CEO, 150-person company',
+    options: [
+      { letter: 'A', text: 'That\'s a significant difference. Can I ask what they\'re including in that price — I want to make sure you\'re comparing the same things.', correct: false },
+      { letter: 'B', text: 'I\'d rather earn this than win it on price. Can I ask what you\'re actually optimizing for — is it lowest cost, or best outcome?', correct: true },
+      { letter: 'C', text: 'I\'m surprised. Their standard package doesn\'t include the features we\'ve been discussing.', correct: false },
+      { letter: 'D', text: 'If price is the deciding factor, we may not be the right fit. But if there\'s more to it, I\'d love to understand.', correct: false }
+    ],
+    feedback: {
+      correct: '<strong>Bold and correct.</strong> You didn\'t flinch, didn\'t match price, and didn\'t get defensive. You reframed the question from "who\'s cheaper" to "what are you actually trying to achieve" — which is the only ground where you can win. Option A sounds like you\'re looking for a gotcha. Option D is close but slightly passive.',
+      wrong: 'A 30% price gap presented to a CEO is a test. Responding by looking for flaws in their proposal sounds desperate. "May not be the right fit" is too passive. The right move is to reframe the decision criteria entirely — from cost to outcome. That\'s the only fight you can win on your terms.'
+    }
+  },
+  {
+    category: 'need', categoryLabel: 'Need / Value', difficulty: 'hard',
+    objection: '"We tried something like this two years ago. It didn\'t stick and we wasted the investment."',
+    persona: '— Chief People Officer, enterprise company',
+    options: [
+      { letter: 'A', text: 'I\'m sorry to hear that. Our implementation process is quite different — we have dedicated success managers to make sure that doesn\'t happen.', correct: false },
+      { letter: 'B', text: 'That\'s really important context. What happened? I want to understand what went wrong before I say anything about what we do differently.', correct: true },
+      { letter: 'C', text: 'That\'s actually one of the most common things we hear. Most companies have had a failed implementation — we\'re built to be different.', correct: false },
+      { letter: 'D', text: 'What would it take for you to feel confident this time would be different?', correct: false }
+    ],
+    feedback: {
+      correct: '<strong>The right instinct is to listen before you defend.</strong> This objection carries real emotional weight — real money was spent, real credibility was lost. Jumping straight to "we\'re different" before understanding what happened is arrogant and unconvincing. Asking what went wrong shows respect, surfaces the real concern, and gives you the information you need to actually address it.',
+      wrong: 'A past failed implementation is one of the hardest objections because it\'s personal and it\'s earned. "We\'re different" without understanding why they failed sounds like every other vendor they\'ve heard. Option D is not bad, but it skips the most important step: understanding what actually went wrong before trying to solve it.'
+    }
+  },
+  {
+    category: 'authority', categoryLabel: 'Authority', difficulty: 'hard',
+    objection: '"I love it, but I\'m not the one who signs off on this kind of spend. And I don\'t know if I can get that person\'s attention right now."',
+    persona: '— Director of Learning & Development',
+    options: [
+      { letter: 'A', text: 'That\'s okay — can you give me their contact information so I can reach out directly?', correct: false },
+      { letter: 'B', text: 'I appreciate your honesty. If you were going to make the case to them, what would you lead with? I want to make sure I\'m equipping you, not just adding to your plate.', correct: true },
+      { letter: 'C', text: 'What if we started with a free pilot? That might make it easier to get approval.', correct: false },
+      { letter: 'D', text: 'How much influence do you have on this type of decision, even if you don\'t have final sign-off?', correct: false }
+    ],
+    feedback: {
+      correct: '<strong>Sophisticated move.</strong> You turned the constraint into a coaching conversation. Your champion now has to think through the pitch from the decision-maker\'s perspective — which prepares them to actually deliver it. You also positioned yourself as someone helping them succeed, not just trying to close a deal. That\'s how you build a champion who actually goes to bat for you.',
+      wrong: 'Going around your champion damages the relationship. A free pilot without executive buy-in often stalls at scale. Asking how much influence they have can feel insulting to someone who just told you they\'re trying to help. The right move is to build the internal pitch together — with you coaching and them delivering.'
+    }
+  }
+];
+
+// ── Game state ──
+let currentIdx = 0;
+let score = 0;
+let timerInterval = null;
+let timeLeft = 30;
+let answered = false;
+let categoryScores = {
+  pricing: { correct: 0, total: 0 },
+  timing: { correct: 0, total: 0 },
+  competitor: { correct: 0, total: 0 },
+  need: { correct: 0, total: 0 },
+  authority: { correct: 0, total: 0 }
+};
+
+function startGame() {
+  currentIdx = 0;
+  score = 0;
+  categoryScores = {
+    pricing: { correct: 0, total: 0 },
+    timing: { correct: 0, total: 0 },
+    competitor: { correct: 0, total: 0 },
+    need: { correct: 0, total: 0 },
+    authority: { correct: 0, total: 0 }
+  };
+  document.getElementById('introScreen').style.display = 'none';
+  document.getElementById('gameScreen').style.display = 'flex';
+  buildProgressTrack();
+  loadCard();
+}
+
+function buildProgressTrack() {
+  const track = document.getElementById('progressTrack');
+  track.innerHTML = '';
+  CARDS.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'progress-dot' + (i === 0 ? ' current' : '');
+    dot.id = `dot-${i}`;
+    track.appendChild(dot);
+  });
+}
+
+function updateProgressDot(idx, correct) {
+  const dot = document.getElementById(`dot-${idx}`);
+  if (dot) {
+    dot.classList.remove('current');
+    dot.classList.add(correct ? 'done' : 'wrong');
+  }
+  const next = document.getElementById(`dot-${idx + 1}`);
+  if (next) next.classList.add('current');
+}
+
+function loadCard() {
+  answered = false;
+  const card = CARDS[currentIdx];
+
+  // Difficulty badge
+  const badge = document.getElementById('diffBadge');
+  badge.className = `difficulty-badge ${card.difficulty}`;
+  badge.textContent = card.difficulty.charAt(0).toUpperCase() + card.difficulty.slice(1);
+
+  // Card content
+  const objCard = document.getElementById('objCard');
+  objCard.className = `objection-card ${card.category}`;
+  document.getElementById('cardCategory').className = `card-category ${card.category}`;
+  document.getElementById('cardCategory').textContent = card.categoryLabel;
+  document.getElementById('cardObjection').textContent = card.objection;
+  document.getElementById('cardPersona').textContent = card.persona;
+
+  // Options
+  const grid = document.getElementById('optionsGrid');
+  grid.innerHTML = '';
+  card.options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-letter">${opt.letter}</span><span class="option-text">${opt.text}</span>`;
+    btn.onclick = () => selectOption(opt.correct, btn, card);
+    grid.appendChild(btn);
+  });
+
+  // Reset feedback
+  const fb = document.getElementById('feedbackPanel');
+  fb.className = 'feedback-panel';
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  // Score
+  document.getElementById('scoreDisplay').textContent = score;
+
+  // Timer
+  startTimer();
+
+  // Level up check
+  if (currentIdx === 5 || currentIdx === 10) {
+    showLevelUp(card.difficulty);
+  }
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timeLeft = 30;
+  updateTimerDisplay(30);
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimerDisplay(timeLeft);
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      timeExpired();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay(t) {
+  document.getElementById('timerNum').textContent = t;
+  const arc = document.getElementById('timerArc');
+  const circumference = 138.2;
+  const offset = circumference * (1 - t / 30);
+  arc.style.strokeDashoffset = offset;
+  arc.className = 'timer-arc' + (t <= 5 ? ' danger' : t <= 10 ? ' warning' : '');
+}
+
+function timeExpired() {
+  if (answered) return;
+  answered = true;
+  const card = CARDS[currentIdx];
+  categoryScores[card.category].total++;
+
+  // Disable all buttons, reveal correct
+  document.querySelectorAll('.option-btn').forEach(btn => {
+    btn.disabled = true;
+    const letter = btn.querySelector('.option-letter').textContent;
+    const opt = card.options.find(o => o.letter === letter);
+    if (opt && opt.correct) btn.classList.add('reveal');
+  });
+
+  showFeedback(false, card);
+  updateProgressDot(currentIdx, false);
+}
+
+function selectOption(isCorrect, btn, card) {
+  if (answered) return;
+  answered = true;
+  clearInterval(timerInterval);
+
+  categoryScores[card.category].total++;
+
+  document.querySelectorAll('.option-btn').forEach(b => {
+    b.disabled = true;
+    const letter = b.querySelector('.option-letter').textContent;
+    const opt = card.options.find(o => o.letter === letter);
+    if (opt && opt.correct && b !== btn) b.classList.add('reveal');
+  });
+
+  if (isCorrect) {
+    btn.classList.add('correct');
+    const bonus = timeLeft >= 20 ? 15 : timeLeft >= 10 ? 10 : 7;
+    score += bonus;
+    categoryScores[card.category].correct++;
+  } else {
+    btn.classList.add('wrong');
+  }
+
+  document.getElementById('scoreDisplay').textContent = score;
+  showFeedback(isCorrect, card);
+  updateProgressDot(currentIdx, isCorrect);
+}
+
+function showFeedback(correct, card) {
+  const panel = document.getElementById('feedbackPanel');
+  const result = document.getElementById('feedbackResult');
+  const text = document.getElementById('feedbackText');
+
+  result.className = `feedback-result ${correct ? 'correct' : 'wrong'}`;
+  result.textContent = correct ? '✓ CORRECT' : '✗ WRONG';
+  text.innerHTML = correct ? card.feedback.correct : card.feedback.wrong;
+
+  panel.className = 'feedback-panel visible';
+  document.getElementById('nextBtn').className = 'next-btn visible';
+  document.getElementById('nextBtn').textContent = currentIdx < CARDS.length - 1 ? 'Next Objection →' : 'See Results →';
+}
+
+function nextCard() {
+  currentIdx++;
+  if (currentIdx >= CARDS.length) {
+    showResults();
+  } else {
+    loadCard();
+  }
+}
+
+function showLevelUp(difficulty) {
+  const overlay = document.getElementById('overlay');
+  const banner = document.getElementById('levelUpBanner');
+  const title = document.getElementById('levelUpTitle');
+  const desc = document.getElementById('levelUpDesc');
+
+  title.className = `level-up-title ${difficulty}`;
+  title.textContent = difficulty.toUpperCase();
+  desc.textContent = difficulty === 'medium'
+    ? 'The objections get harder. Prospects are more skeptical and the stakes are higher.'
+    : 'Final tier. These are the objections that kill real deals. Think carefully.';
+
+  overlay.classList.add('visible');
+  banner.classList.add('visible');
+
+  setTimeout(() => {
+    overlay.classList.remove('visible');
+    banner.classList.remove('visible');
+  }, 2200);
+}
+
+function showResults() {
+  document.getElementById('gameScreen').style.display = 'none';
+  const resultsScreen = document.getElementById('resultsScreen');
+  resultsScreen.style.display = 'flex';
+
+  document.getElementById('finalScore').textContent = score;
+
+  const maxScore = 15 * 15;
+  const pct = score / maxScore;
+
+  let tierClass, tierText, titleText;
+  if (pct >= 0.8) {
+    tierClass = 'elite'; tierText = '🏆 ELITE · Objection handling is a strength';
+    titleText = 'SHARP.';
+  } else if (pct >= 0.6) {
+    tierClass = 'strong'; tierText = '● STRONG · A few gaps worth closing';
+    titleText = 'SOLID.';
+  } else if (pct >= 0.4) {
+    tierClass = 'developing'; tierText = '◐ DEVELOPING · Some instincts, but patterns need work';
+    titleText = 'KEEP DRILLING.';
+  } else {
+    tierClass = 'needs-work'; tierText = '○ NEEDS WORK · Run this drill again tomorrow';
+    titleText = 'NOT YET.';
+  }
+
+  document.getElementById('resultsTitle').textContent = titleText;
+  const tier = document.getElementById('resultsTier');
+  tier.className = `results-tier ${tierClass}`;
+  tier.textContent = tierText;
+
+  // Category breakdown
+  const breakdown = document.getElementById('resultsBreakdown');
+  const catColors = {
+    pricing: 'ff6b35', timing: 'a855f7', competitor: '3d9fff', need: '00e87a', authority: 'ffb830'
+  };
+  const catLabels = {
+    pricing: 'Pricing / Budget', timing: 'Timing', competitor: 'Competitor', need: 'Need / Value', authority: 'Authority'
+  };
+
+  breakdown.innerHTML = '';
+  Object.entries(categoryScores).forEach(([cat, data]) => {
+    const pct = data.total > 0 ? data.correct / data.total : 0;
+    const row = document.createElement('div');
+    row.className = 'breakdown-row';
+    row.innerHTML = `
+      <div class="breakdown-cat" style="color:#${catColors[cat]}">${catLabels[cat]}</div>
+      <div class="breakdown-bar-track">
+        <div class="breakdown-bar-fill" style="width:${pct * 100}%;background:#${catColors[cat]}"></div>
+      </div>
+      <div class="breakdown-score">${data.correct}/${data.total}</div>
+    `;
+    breakdown.appendChild(row);
+  });
+}
+
+function restartGame() {
+  document.getElementById('resultsScreen').style.display = 'none';
+  startGame();
+}
+
+function showIntro() {
+  document.getElementById('resultsScreen').style.display = 'none';
+  document.getElementById('introScreen').style.display = 'flex';
+}
+</script>
+</body>
+</html>
